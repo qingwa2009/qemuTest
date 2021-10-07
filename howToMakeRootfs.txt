@@ -1,0 +1,33 @@
+#使用busybox制作根文件系统
+$ cd busybox/
+#查看可以编译哪些系统
+$ make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- help
+#使用通用配置，生成.config文件
+$ make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- defconfig
+#手动选择需要的配置，
+#setting->build option下选上build static binary将busybox编译成静态文件
+$ make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- menuconfig
+#编译生成_install目录
+$ make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- install
+$ cd _install
+
+#/sbin/init会执行该脚本，mdev -s busybox自动挂载设备节点
+$ mkdir -p etc/init.d
+$ cd etc/init.d/
+$ cat > rcS <<EOF
+> #!/bin/sh
+> mkdir /proc /sys
+> mount -t proc nodev /proc
+> mount -t sysfs nodev /sys
+> mdev -s
+> EOF
+
+#添加权限
+$ chmod -R 777 etc/
+
+$ cd ../..
+#cpio制作initramfs
+$ find . | cpio -o --format=newc > ../../qemu/my_initrd.img
+
+
+

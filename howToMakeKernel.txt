@@ -1,0 +1,15 @@
+# how to install arm-none-linux-gnueabi-gcc:
+#"PATH=$PATH:xxx/arm-2014.05/bin" add to /etc/bash.bashrc
+#"source /etc/bash.bashrc" for refresh
+#"sudo apt install lib32z1" first in 64bit system because arm-gcc is 32bits
+#"sudo apt install lzop" for compress zImage
+
+#to see the supported machine
+make ARCH=arm help
+
+#to create .config file for the target machine
+make ARCH=arm xxx_defconfig
+
+#make the kernel in arch/arm/boot/ zImage and Image
+make ARCH=arm CROSS_COMPILE=arm-none-linux-gnueabi- all
+

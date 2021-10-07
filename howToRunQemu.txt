@@ -1,0 +1,55 @@
+
+#Error: unrecognized/unsupported machine ID; 未指定设备树
+$ qemu-system-arm -M versatileab \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -m 128M -nographic \
+
+#指定设备树，未挂载根文件系统
+$ qemu-system-arm -M versatileab \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-ab.dtb \
+  -append "console=ttyAMA0" \
+  -m 128M -nographic \
+
+
+---------------------手动制作最简rootfs（没啥用的）---------------------
+$ mkdir rootfs
+$ cd rootfs/
+#创建初始的c程序, int main()......
+$ touch ./init.c
+# 编译init，需要加上-static
+$ arm-none-linux-gnueabi-gcc -o init init.c -static
+#建立设备节点文件
+$ mkdir ./dev
+$ sudo mknod ./dev/console c 5 1
+$ sudo mknod ./dev/ram b 1 0
+# rootfs目录打包成CPIO格式化文档
+$ find . | cpio -o --format=newc > ../my_initrd.img
+
+#启动仿真内核及文件系统
+$ qemu-system-arm -M versatilepb \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
+  -initrd /home/appx/Desktop/qemu/my_initrd.img \
+  -append "console=ttyAMA0 rdinit=/init" \
+  -m 128M -nographic \
+-----------------------------------------------------------------------
+
+#查看howToMakeRootfs制作根文件系统
+
+#启动仿真内核，进入sh
+$ qemu-system-arm -M versatilepb \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
+  -initrd /home/appx/Desktop/qemu/my_initrd.img \
+  -append "console=ttyAMA0 rdinit=/bin/sh" \
+  -m 128M -nographic \
+
+#启动仿真内核，/sbin/init执行/ect/init/d/rcS脚本。mdev自动创建设备节点
+$ qemu-system-arm -M versatilepb \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
+  -initrd /home/appx/Desktop/qemu/my_initrd.img \
+  -append "console=ttyAMA0 root=/dev/ram rdinit=/sbin/init" \
+  -m 128M -nographic \
+
