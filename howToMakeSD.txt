@@ -1,0 +1,15 @@
+#创建sd镜像文件
+$ dd if=/dev/zero of=mysd.ext3 bs=1M count=32
+
+#格式化成ext3文件系统格式
+$ mkfs.ext3 mysd.ext3
+
+#挂载设备，等价于：
+#sudo losetup /dev/loop1~n mysd.ext3
+#sudo mount /dev/loop1~n /mnt
+#不过下面那句umount /mnt loop设备也会自动移除
+$ sudo mount -o loop mysd.ext3 /mnt
+
+#修改所有者：sudo chown appx /mnt
+#卸载设备：sudo umount /mnt
+

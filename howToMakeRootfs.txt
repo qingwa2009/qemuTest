@@ -26,8 +26,16 @@ $ cat > rcS <<EOF
 $ chmod -R 777 etc/
 
 $ cd ../..
-#cpio制作initramfs
+
+#cpio制作initramfs 这种方式制作的文件系统可以直接在内存运行
 $ find . | cpio -o --format=newc > ../../qemu/my_initrd.img
 
+#也可以做成块设备，类似硬盘挂载那样
+$ sudo dd if=/dev/zero of=../../qemu/rootfs.ext3 bs=1M count=32
+$ sudo mkfs.ext3 ../../qemu/rootfs.ext3
+$ sudo mount -o loop ../../qemu/rootfs.ext3 /mnt
+$ sudo cp -r * /mnt
+$ sudo chmod -R 777 /mnt/etc/
+$ sudo umount /mnt
 
 

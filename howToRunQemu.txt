@@ -46,10 +46,21 @@ $ qemu-system-arm -M versatilepb \
   -m 128M -nographic \
 
 #启动仿真内核，/sbin/init执行/ect/init/d/rcS脚本。mdev自动创建设备节点
+#将文件系统加载入内存的方式启动内核，-drive 再而外挂载个/dev/sda硬盘
 $ qemu-system-arm -M versatilepb \
+  -m 128M -nographic \
   -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
   -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
   -initrd /home/appx/Desktop/qemu/my_initrd.img \
-  -append "console=ttyAMA0 root=/dev/ram rdinit=/sbin/init" \
+  -append "console=ttyAMA0 root=/dev/ram0 rdinit=/sbin/init" \
+  -drive if=scsi,driver=file,filename=mysd.ext3 \
+
+#用挂载硬盘文件系统的方式启动内核
+$ qemu-system-arm -M versatilepb \
   -m 128M -nographic \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
+  -append "console=ttyAMA0 rw root=/dev/sda rw rdinit=/sbin/init" \
+  -drive if=scsi,driver=file,filename=rootfs.ext3 \
+
 
