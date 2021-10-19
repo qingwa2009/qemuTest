@@ -1,1 +1,2 @@
 #回环设备/dev/loop在编译内核时在make menuconfig里手动添加上，不然mount不了回环设备
+#交叉编译要静态编译-static

@@ -63,4 +63,14 @@ $ qemu-system-arm -M versatilepb \
   -append "console=ttyAMA0 rw root=/dev/sda rw rdinit=/sbin/init" \
   -drive if=scsi,driver=file,filename=rootfs.ext3 \
 
+#-nic tap 主机添加tap网卡
+#主机可以修改/etc/qemu-ifup 添加ifconfig $1 10.0.0.1 netmask 255.255.255.0
+#以自动修改ip
+$ sudo qemu-system-arm -M versatilepb \
+  -m 128M -nographic \
+  -kernel /home/appx/Desktop/linux-4.14.5/arch/arm/boot/zImage \
+  -dtb /home/appx/Desktop/linux-4.14.5/arch/arm/boot/dts/versatile-pb.dtb \
+  -append "console=ttyAMA0 rw root=/dev/sda rw rdinit=/sbin/init" \
+  -drive if=scsi,driver=file,filename=rootfs.ext3 \
+  -nic tap \
 

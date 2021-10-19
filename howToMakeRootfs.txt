@@ -20,6 +20,11 @@ $ cat > rcS <<EOF
 > mount -t proc nodev /proc
 > mount -t sysfs nodev /sys
 > mdev -s
+> echo config eth0 ip...
+> ifconfig eth0 10.0.0.2 netmask 255.255.255.0
+> echo mount nfs...
+> mount -t nfs -o nolock 10.0.0.1:/home/appx/Desktop/nfs /mnt
+> echo Hello ARM
 > EOF
 
 #添加权限
